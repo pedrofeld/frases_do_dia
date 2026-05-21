@@ -23,8 +23,12 @@ class _HomeStatefulState extends State<HomeStateful> {
   var _titulo = "Frases do Dia";
   var _frase = "";
   var _autor = "";
+  bool _carregando = false;
 
   Future<void> gerarFrase() async {
+    setState(() {
+      _carregando = true;
+    });
     try {
       final url = Uri.parse(
         "https://zenquotes.io/api/random",
@@ -35,17 +39,20 @@ class _HomeStatefulState extends State<HomeStateful> {
         setState(() {
           _frase = dados[0]['q'];
           _autor = dados[0]['a'];
+          _carregando = false;
         });
       } else {
         setState(() {
           _frase = "Erro ao carregar frase.";
           _autor = "";
+          _carregando = false;
         });
       }
     } catch (e) {
       setState(() {
         _frase = "Sem conexão com a internet.";
         _autor = "";
+        _carregando = false;
       });
     }
   }
@@ -80,22 +87,26 @@ class _HomeStatefulState extends State<HomeStateful> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    _frase.isEmpty
-                        ? "Clique no botão abaixo para gerar uma frase"
-                        : _frase,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: _frase.isEmpty ? 18 : 24,
+                  _carregando
+                    ? CircularProgressIndicator(
+                        color: Colors.green,
+                      )
+                    : Text(
+                      _frase.isEmpty
+                          ? "Clique no botão abaixo para gerar uma frase"
+                          : _frase,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: _frase.isEmpty ? 18 : 24,
 
-                      color: _frase.isEmpty
-                          ? Colors.grey
-                          : Colors.black,
+                        color: _frase.isEmpty
+                            ? Colors.grey
+                            : Colors.black,
 
-                      fontStyle: _frase.isEmpty
-                          ? FontStyle.italic
-                          : FontStyle.normal,
-                    ),
+                        fontStyle: _frase.isEmpty
+                            ? FontStyle.italic
+                            : FontStyle.normal,
+                      ),
                   ),
                 ],
               ),
