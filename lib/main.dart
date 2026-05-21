@@ -20,39 +20,39 @@ class HomeStateful extends StatefulWidget {
 
 class _HomeStatefulState extends State<HomeStateful> {
 
-  var _titulo = "Frases do Dia";
-  var _frase = "";
+  var _title = "Phrases of the day";
+  var _phrase = "";
   var _autor = "";
-  bool _carregando = false;
+  bool _loading = false;
 
-  Future<void> gerarFrase() async {
+  Future<void> generatePhrase() async {
     setState(() {
-      _carregando = true;
+      _loading = true;
     });
     try {
       final url = Uri.parse(
         "https://zenquotes.io/api/random",
       );
-      final resposta = await http.get(url);
-      if (resposta.statusCode == 200) {
-        final dados = jsonDecode(resposta.body);
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
         setState(() {
-          _frase = dados[0]['q'];
-          _autor = dados[0]['a'];
-          _carregando = false;
+          _phrase = data[0]['q'];
+          _autor = data[0]['a'];
+          _loading = false;
         });
       } else {
         setState(() {
-          _frase = "Erro ao carregar frase.";
+          _phrase = "Error loading phrase.";
           _autor = "";
-          _carregando = false;
+          _loading = false;
         });
       }
     } catch (e) {
       setState(() {
-        _frase = "Sem conexão com a internet.";
+        _phrase = "Without connection with internet.";
         _autor = "";
-        _carregando = false;
+        _loading = false;
       });
     }
   }
@@ -63,7 +63,7 @@ class _HomeStatefulState extends State<HomeStateful> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-            _titulo,
+            _title,
           style: TextStyle(
             color: Colors.white,
           ),
@@ -77,7 +77,7 @@ class _HomeStatefulState extends State<HomeStateful> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Image.asset(
-              "images/logo.png",
+              "images/logo-en.png",
               fit: BoxFit.contain,
             ),
             SizedBox(height: 50),
@@ -87,23 +87,23 @@ class _HomeStatefulState extends State<HomeStateful> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _carregando
+                  _loading
                     ? CircularProgressIndicator(
                         color: Colors.green,
                       )
                     : Text(
-                      _frase.isEmpty
-                          ? "Clique no botão abaixo para gerar uma frase"
-                          : _frase,
+                      _phrase.isEmpty
+                          ? "Click on the button below to generate a phrase"
+                          : _phrase,
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: _frase.isEmpty ? 18 : 24,
+                        fontSize: _phrase.isEmpty ? 18 : 24,
 
-                        color: _frase.isEmpty
+                        color: _phrase.isEmpty
                             ? Colors.grey
                             : Colors.black,
 
-                        fontStyle: _frase.isEmpty
+                        fontStyle: _phrase.isEmpty
                             ? FontStyle.italic
                             : FontStyle.normal,
                       ),
@@ -122,7 +122,7 @@ class _HomeStatefulState extends State<HomeStateful> {
             ),
             SizedBox(height: 30),
             TextButton(
-              onPressed: gerarFrase,
+              onPressed: generatePhrase,
               style: TextButton.styleFrom(
                 backgroundColor: Colors.green,
                 padding: EdgeInsets.symmetric(
@@ -131,7 +131,7 @@ class _HomeStatefulState extends State<HomeStateful> {
                 )
               ),
               child: Text(
-                "Nova Frase",
+                "New phrase",
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
